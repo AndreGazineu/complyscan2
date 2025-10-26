@@ -157,45 +157,37 @@ app.post('/api/visualdiff', upload.fields([{ name: 'file1', maxCount: 1 }, { nam
 
         // 2. Criar um prompt abrangente
         const analysisPrompt = `
-          Você é um especialista em garantia de qualidade de rótulos e documentos, com atenção meticulosa aos detalhes. Sua tarefa é determinar se a "Nova Versão" (Imagem 2) é idêntica à "Versão de Referência" (Imagem 1).
+          **Tarefa**: Compare a Imagem 1 (referência) com a Imagem 2 (nova versão) e determine se são idênticas.
+          **Contexto**:
+          - Imagem 3 é um guia visual que destaca as áreas de prováveis diferenças.
+          - Texto da Imagem 1 (OCR): """${text1}"""
+          - Texto da Imagem 2 (OCR): """${text2}"""
 
-          Para sua análise, você recebeu as seguintes informações:
-          1.  **Imagem 1:** A versão de referência.
-          2.  **Imagem 2:** A nova versão para aprovação.
-          3.  **Imagem 3 (Apoio):** Uma imagem que destaca em vermelho as áreas com possíveis diferenças visuais. Use-a como um guia para focar sua atenção.
-          4.  **Texto Extraído da Imagem 1 (OCR):**
-              \`\`\`
-              ${text1}
-              \`\`\`
-          5.  **Texto Extraído da Imagem 2 (OCR):**
-              \`\`\`
-              ${text2}
-              \`\`\`
+          **Formato da Resposta**:
+          Sua resposta DEVE ser um objeto JSON com a seguinte estrutura:
+          {
+            "sao_diferentes": boolean, // true se houver QUALQUER diferença, false caso contrário
+            "diferencas": [ // Array de strings. Vazio se não houver diferenças.
+              // Exemplo: "Diferença Textual: O endereço mudou de 'Rua A' para 'Rua B'."
+              // Exemplo: "Diferença Visual: O logotipo foi reposicionado."
+            ]
+          }
 
-          **INSTRUÇÕES:**
-          1.  **Análise Textual:** Compare o "Texto Extraído da Imagem 1" com o "Texto Extraído da Imagem 2". Aponte CADA diferença textual, por menor que seja (erros de digitação, pontuação, espaçamento, etc.).
-          2.  **Análise Visual:** Usando a "Imagem 3" como guia, inspecione visualmente a "Imagem 1" e a "Imagem 2". Procure por diferenças em:
-              *   Logotipos, ícones ou outros elementos gráficos.
-              *   Cores, fontes e layout.
-              *   Posicionamento de elementos.
-          3.  **Veredito Final:** Com base em TODAS as informações, forneça um veredito claro e objetivo. Responda com UMA das duas opções:
-              *   **"VEREDITO: As imagens são IDÊNTICAS."** (Use esta resposta APENAS se não houver absolutamente NENHUMA diferença textual ou visual).
-              *   **"VEREDITO: As imagens são DIFERENTES."**
-
-          4.  **Relatório de Diferenças:** Se o veredito for "DIFERENTES", forneça uma lista detalhada e numerada de TODAS as discrepâncias encontradas. Seja específico.
-
-          Exemplo de Relatório de Diferenças:
-          1.  Diferença Textual: O endereço no rótulo foi alterado de "Rua A, 123" para "Rua B, 456".
-          2.  Diferença Visual: O logotipo da empresa foi movido para o canto superior direito.
-          3.  Diferença Visual: A cor de fundo do título mudou de azul para verde.
-        `;
+          **Instruções**:
+          1.  Compare o texto extraído de ambas as imagens. Registre cada discrepância.
+          2.  Inspecione as diferenças visuais (cores, fontes, layout, imagens), usando a Imagem 3 como auxílio. Registre cada discrepância.
+          3.  Preencha o JSON de resposta com base na sua análise. O campo "diferencas" deve conter uma lista de TODAS as diferenças encontradas.
+          `;
 
         // 3. Gerar conteúdo com todas as informações
         const result = await model.generateContent([analysisPrompt, imagePart1, imagePart2, imagePart3]);
         const response = await result.response;
         const analysisText = response.text();
 
-        res.json({ text: analysisText });
+        // O modelo retorna o JSON como uma string, então fazemos o parse
+        const jsonData = JSON.parse(analysisText);
+
+        res.json(jsonData); // Envia o JSON estruturado para o frontend
 
     } catch (error) {
         console.error("Erro na API de Verificação Visual:", error);
