@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complyscan - Comparador Integrado</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app-container">
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <h3>Upload do Primeiro Arquivo</h3>
+                <div class="drop-area" id="drop-area-1">
+                    <i class="fas fa-file-upload"></i>
+                    <p>Arraste e solte ou clique para selecionar</p>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <h3>Upload do Segundo Arquivo</h3>
+                <div class="drop-area" id="drop-area-2">
+                    <i class="fas fa-file-upload"></i>
+                    <p>Arraste e solte ou clique para selecionar</p>
+                </div>
+            </div>
+            <div class="swiper-slide diff-slide">
+                <h3>Análise de Diferenças</h3>
+                <div class="comparison-results" id="resultados">
+                    <div class="loading-animation"></div>
+                    <p>Processando arquivos...</p>
+                </div>
+            </div>
+            <div class="swiper-slide overlay-slide">
+                <h3>Comparação Visual (Overlay)</h3>
+                <input type="range" id="overlay-control" min="0" max="1" step="0.01" value="0.5">
+                <div class="canvas-container" id="overlay-canvas-container">
+                    <canvas id="overlay-canvas1"></canvas>
+                    <canvas id="overlay-canvas2"></canvas>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <h3>Palavras Faltantes e Código de Barras</h3>
+                <div class="comparison-results" id="text-comparison-results">
+                    <div class="loading-animation"></div>
+                    <p>Gerando relatório...</p>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <h3>Análise Avançada com IA</h3>
+                <div class="upload-container">
+                    <button id="unifiedAnalysisButton">Análise Unificada</button>
+                </div>
+                <div id="unified-results" style="margin-top: 20px;"></div>
+                <div id="diff-results" style="margin-top: 20px;"></div>
+                <div id="loading-message" style="display: none; text-align: center;">
+                    <div class="loading-animation"></div>
+                    <p>Analisando... Por favor, aguarde.</p>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <h3><i class="fas fa-tasks"></i> Análise de Conformidade (ComplyScan)</h3>
+                <p style="text-align: center; margin-bottom: 15px;">Esta análise utiliza <strong>apenas a primeira imagem</strong> para verificar a conformidade com as normas.</p>
+                <div class="upload-container">
+                    <button id="complyScanButton">Iniciar Análise de Conformidade</button>
+                </div>
+                <div id="loading-message-comply" style="display: none; text-align: center; margin-top: 20px;">
+                    <div class="loading-animation"></div>
+                    <p>Analisando conformidade... Isso pode levar um momento.</p>
+                </div>
+                <pre id="comply-scan-results" style="margin-top: 20px; white-space: pre-wrap; word-wrap: break-word;"></pre>
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://andregazineu.github.io/barcode/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.0.0/diff.min.js"></script>
+<script src="/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "complyscan-integrated",
+  "version": "1.0.0",
+  "description": "An integrated tool for image comparison, OCR, and compliance analysis.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ocr",
+    "gemini",
+    "compliance",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.14.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
