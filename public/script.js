@@ -431,9 +431,9 @@ async function enviarParaAnaliseUnificada() {
 
         const resultsDiv = document.getElementById("unified-results");
         if (data.hasDifferences) {
-            resultsDiv.innerHTML = `<strong>Diferenças Encontradas:</strong><br><p>${data.summary}</p>`;
+            resultsDiv.innerHTML = `<strong>As imagens são diferentes:</strong><br><p>${data.summary.replace('As imagens são diferentes.', '').trim()}</p>`;
         } else {
-            resultsDiv.innerHTML = `<strong>Nenhuma diferença encontrada.</strong><br><p>${data.summary}</p>`;
+            resultsDiv.innerHTML = `<strong>As imagens são iguais.</strong>`;
         }
 
     } catch (error) {
