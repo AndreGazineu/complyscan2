@@ -52,11 +52,11 @@
                 </div>
             </div>
             <div class="swiper-slide">
-                <h3>Análise Avançada com IA</h3>
+                <h3><i class="fas fa-flask-vial"></i> Análise Avançada com IA</h3>
                 <div class="upload-container">
                     <button id="unifiedAnalysisButton">Análise Unificada</button>
                 </div>
-                <div id="unified-results" style="margin-top: 20px;"></div>
+                <div id="unified-results" class="advanced-analysis-results" style="margin-top: 20px;"></div>
                 <div id="diff-results" style="margin-top: 20px;"></div>
                 <div id="loading-message" style="display: none; text-align: center;">
                     <div class="loading-animation"></div>
@@ -66,6 +66,15 @@
             <div class="swiper-slide">
                 <h3><i class="fas fa-tasks"></i> Análise de Conformidade (ComplyScan)</h3>
                 <p style="text-align: center; margin-bottom: 15px;">Esta análise utiliza <strong>apenas a primeira imagem</strong> para verificar a conformidade com as normas.</p>
+                <div class="complyscan-requirements-container">
+                    <h4>Requisitos de Análise</h4>
+                    <div id="complyscan-requirements-list"></div>
+                    <div class="add-requirement-container">
+                        <input type="text" id="new-requirement-input" placeholder="Adicionar novo requisito...">
+                        <button id="add-requirement-button"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+
                 <div class="upload-container">
                     <button id="complyScanButton">Iniciar Análise de Conformidade</button>
                 </div>
@@ -73,7 +82,7 @@
                     <div class="loading-animation"></div>
                     <p>Analisando conformidade... Isso pode levar um momento.</p>
                 </div>
-                <pre id="comply-scan-results" style="margin-top: 20px; white-space: pre-wrap; word-wrap: break-word;"></pre>
+                <div id="comply-scan-results" class="comply-scan-results-container"></div>
             </div>
         </div>
         <div class="swiper-pagination"></div>

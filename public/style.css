@@ -571,6 +571,53 @@ canvas {
     background: #aaa;
 }
 
+.advanced-analysis-results {
+    background: white;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    margin-top: var(--spacing-sm);
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow);
+    position: relative;
+    z-index: 1;
+    border-top: 3px solid var(--accent);
+    transition: all 0.3s ease;
+}
+
+.advanced-analysis-results:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.analysis-card {
+    background-color: #f8f9fa;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    transition: all 0.3s ease;
+}
+
+.analysis-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.analysis-card h4 {
+    font-family: var(--heading-font);
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: var(--spacing-xs);
+}
+
+.analysis-card p {
+    font-family: var(--body-font);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+
 
 .checklist li {
     background-color: #fff;
@@ -632,4 +679,56 @@ canvas {
     color: var(--light-text);
     margin: 0;
     padding-left: 40px; /* Align with text after icon */
+}
+
+.complyscan-requirements-container {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+}
+
+.complyscan-requirements-container h4 {
+    font-family: var(--heading-font);
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: var(--spacing-sm);
+}
+
+#complyscan-requirements-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.add-requirement-container {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+#new-requirement-input {
+    flex-grow: 1;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: 8px;
+    font-family: var(--body-font);
+}
+
+#add-requirement-button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.comply-scan-results-container {
+    margin-top: 20px;
 }

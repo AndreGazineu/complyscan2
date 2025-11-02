@@ -85,6 +85,8 @@ const swiper = new Swiper('.swiper-container', {
                 renderizarEajustarOverlay();
             } else if (this.activeIndex === 4 && pdfReady[0] && pdfReady[1]) {
                 compararTextosPDFs(pdfFiles[0], pdfFiles[1]);
+            } else if (this.activeIndex === 6) { // ComplyScan slide
+                fetchAndPopulateRequirements();
             }
         }
     }
@@ -102,7 +104,8 @@ dropAreas.forEach((dropArea, index) => {
         input.accept = "application/pdf, image/*";
         input.onchange = (e) => {
             handleFileDrop({
-                preventDefault: ()=>{},
+                preventDefault: ()=>{
+                },
                 dataTransfer: { files: e.target.files }
             }, index);
         };
@@ -430,10 +433,44 @@ async function enviarParaAnaliseUnificada() {
         }
 
         const resultsDiv = document.getElementById("unified-results");
-        if (data.hasDifferences) {
-            resultsDiv.innerHTML = `<strong>As imagens são diferentes:</strong><br><p>${data.summary.replace('As imagens são diferentes.', '').trim()}</p>`;
+        resultsDiv.innerHTML = ''; // Limpa resultados anteriores
+
+        if (data.hasDifferences && data.summary) {
+            // Adiciona um título geral
+            const title = document.createElement('h4');
+            title.innerHTML = `<strong>Análise das Diferenças:</strong>`;
+            resultsDiv.appendChild(title);
+
+            // Processa o resumo para criar cards
+            const topics = data.summary.split('\n').filter(line => line.trim() !== '');
+            topics.forEach(topic => {
+                const card = document.createElement('div');
+                card.className = 'analysis-card';
+
+                const parts = topic.split(':');
+                const topicTitle = parts[0] ? parts[0].trim() : 'Informação';
+                const topicDescription = parts.slice(1).join(':').trim();
+
+                const cardTitle = document.createElement('h4');
+                cardTitle.textContent = topicTitle;
+
+                const cardText = document.createElement('p');
+                cardText.textContent = topicDescription;
+
+                card.appendChild(cardTitle);
+                card.appendChild(cardText);
+                resultsDiv.appendChild(card);
+            });
         } else {
-            resultsDiv.innerHTML = `<strong>As imagens são iguais.</strong>`;
+            const card = document.createElement('div');
+            card.className = 'analysis-card';
+            const cardTitle = document.createElement('h4');
+            cardTitle.textContent = 'Conclusão';
+            const cardText = document.createElement('p');
+            cardText.textContent = 'As imagens são funcionalmente idênticas.';
+            card.appendChild(cardTitle);
+            card.appendChild(cardText);
+            resultsDiv.appendChild(card);
         }
 
     } catch (error) {
@@ -458,9 +495,12 @@ async function enviarParaComplyScan() {
     }
 
     try {
+        const requirements = Array.from(document.querySelectorAll('#complyscan-requirements-list input[type="checkbox"]:checked')).map(cb => cb.value);
+        console.log('Enviando requisitos:', requirements);
         const formData = new FormData();
         const file1 = dataURLtoFile(pdfImages[0], 'imagem1.png');
         formData.append("file1", file1);
+        formData.append("requirements", JSON.stringify(requirements));
 
         const response = await fetch("/api/complyscan", {
             method: "POST",
@@ -475,7 +515,8 @@ async function enviarParaComplyScan() {
 
         // Constrói o HTML da checklist
         let html = '<ul class="checklist">';
-        data.forEach(item => {
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i];
             let icon = '';
             let statusClass = '';
             switch (item.status) {
@@ -501,7 +542,7 @@ async function enviarParaComplyScan() {
                     <p class="justificativa">${item.justificativa}</p>
                 </li>
             `;
-        });
+        }
         html += '</ul>';
 
         resultsDiv.innerHTML = html;
@@ -515,9 +556,54 @@ async function enviarParaComplyScan() {
     }
 }
 
+function populateRequirements(requirements) {
+    const container = document.getElementById('complyscan-requirements-list');
+    container.innerHTML = '';
+    requirements.forEach(req => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = req;
+        checkbox.checked = true;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(req));
+        container.appendChild(label);
+    });
+}
+
+async function fetchAndPopulateRequirements() {
+    const container = document.getElementById('complyscan-requirements-list');
+    if (container.children.length === 0) { // Apenas preenche se estiver vazio
+        try {
+            const response = await fetch('/api/complyscan/requirements');
+            const requirements = await response.json();
+            populateRequirements(requirements);
+        } catch (error) {
+            console.error('Erro ao buscar requisitos:', error);
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("unifiedAnalysisButton").addEventListener("click", enviarParaAnaliseUnificada);
     document.getElementById("complyScanButton").addEventListener("click", enviarParaComplyScan);
+
+    document.getElementById('add-requirement-button').addEventListener('click', () => {
+        const input = document.getElementById('new-requirement-input');
+        const requirement = input.value.trim();
+        if (requirement) {
+            const container = document.getElementById('complyscan-requirements-list');
+            const label = document.createElement('label');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = requirement;
+            checkbox.checked = true;
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(requirement));
+            container.appendChild(label);
+            input.value = '';
+        }
+    });
 
     const overlayControl = document.getElementById("overlay-control");
     const overlayCanvas2 = document.getElementById("overlay-canvas2");
