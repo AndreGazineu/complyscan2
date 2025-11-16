@@ -1,0 +1,49 @@
+# Arquivo de configuração para o Google Cloud Build.
+# Este arquivo automatiza o processo de build, push e deploy para o Cloud Run.
+
+steps:
+  # 1. Build da imagem do contêiner
+  # Este passo usa o Dockerfile do seu repositório para construir a imagem.
+  # A imagem é marcada com o SHA do commit para garantir um identificador único.
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}'
+      - '.'
+
+  # 2. Push da imagem para o Artifact Registry
+  # Este passo envia a imagem construída para o seu repositório no Artifact Registry.
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}'
+
+  # 3. Deploy da imagem no Cloud Run
+  # Este passo implanta a imagem no seu serviço do Cloud Run.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--image'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}'
+      - '--region'
+      - '${_REGION}'
+      - '--platform'
+      - 'managed'
+      # Descomente a linha abaixo se o serviço precisar ser acessível publicamente.
+      # Por padrão, novos serviços exigem autenticação.
+      - '--allow-unauthenticated'
+
+# Define a imagem que será criada e enviada pelo Cloud Build.
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}'
+
+# Variáveis de substituição que podem ser configuradas no seu gatilho do Cloud Build.
+# Você pode alterar os valores padrão aqui.
+substitutions:
+  _SERVICE_NAME: 'complyscan2'
+  _REGION: 'southamerica-east1'
+  _ARTIFACT_REGISTRY_REPO: 'cloud-run-source-deploy'
